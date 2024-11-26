@@ -18,14 +18,15 @@ class SnakeGame():
         self.refreshTime = 0.1
         self.controller = controller
         self.display = display
-        self.snakeMoveTimer = 0
         self.map = [[(0,0,0)]*self.mapWidth for _ in range(8)]
+        self.timeSurvie = 0
+        self.displayText = ""
         self.wait()
         self.game_loop()
     
     def wait(self):
         self.state = GameState.Waiting
-        
+        self.displayText = "Press 「Space」 to Start"
             
     def wait_scene(self):
         self.draw_wait()
@@ -36,9 +37,13 @@ class SnakeGame():
     def start(self):
         self.state = GameState.Start
         self.snake = Snake()
+        self.displayText = "" 
+        self.snakeMoveTimer = 0
         self.add_fruit()
+        self.timeSurvie = 0
         
     def start_scene(self):
+        self.timeSurvie += self.refreshTime
         self.snakeMoveTimer += self.snake.get_speed()
         if self.snakeMoveTimer >= 1:
             self.snakeMoveTimer = 0
@@ -70,6 +75,7 @@ class SnakeGame():
 
         
     def gameover(self):
+        self.displayText = f"Game Over! Score: {self.snake.length * int(self.timeSurvie)}"
         self.state = GameState.GameOver
         self.gameover_timer = 30
         
@@ -91,7 +97,7 @@ class SnakeGame():
                 self.gameover_scene()
             elif self.state == GameState.Waiting:
                 self.wait_scene()
-            self.display.draw(self.map)
+            self.display.draw(self.map, self.displayText) 
             sleep(self.refreshTime)
             
     def add_fruit(self):
@@ -104,7 +110,7 @@ class SnakeGame():
         self.fruitLoc = randomLoc
     
     def draw_fruit(self):
-        self.map[self.fruitLoc[1]][self.fruitLoc[0]] = (100,100,0)
+        self.map[self.fruitLoc[1]][self.fruitLoc[0]] = (255,0,0)
         
     def is_in_wall(self, x, y):
         if x < 0 or x >= self.mapWidth or y < 0 or y >= self.mapHeight:

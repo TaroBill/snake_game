@@ -17,11 +17,12 @@ class CliDisplay(IDisplay):
     def print_RGB(self, color):
         print(self.rgb_background(color[0], color[1], color[2], "　"), end="")
     
-    def draw(self, map):
+    def draw(self, map, textDisplay=""):
         if map == self.lastMap:
             return
         self.lastMap = copy.deepcopy(map)
         os.system('cls' if os.name == 'nt' else 'clear')
+        print(textDisplay)
         for y in range(self.height):
             for x in range(self.width):
                 self.print_RGB(map[y][x])

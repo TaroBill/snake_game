@@ -6,5 +6,5 @@ class IDisplay(ABC):
         self.height = height
         
     @abstractmethod
-    def draw(self, map):
+    def draw(self, map, textDisplay):
         pass

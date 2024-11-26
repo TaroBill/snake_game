@@ -9,11 +9,12 @@ class SenseHatDisplay(IDisplay):
         self.height = height
         self.lastMap = list()
         
-    def draw(self, map):
+    def draw(self, map, textDisplay):
         if map == self.lastMap:
             return
         self.lastMap = copy.deepcopy(map)
         self.sense.clear()
+        print(textDisplay)
         for x in range(self.height):
             for y in range(self.width):
                 self.sense.set_pixel(x, y, map[y][x])
