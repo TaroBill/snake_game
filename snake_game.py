@@ -10,7 +10,7 @@ class GameState(Enum):
     Start = 1
     GameOver = 2
     
-class SnakeGame:
+class SnakeGame():
     def __init__(self, controller: IController, display: IDisplay) -> None:
         self.snake = Snake()
         self.mapWidth = display.width
@@ -18,65 +18,79 @@ class SnakeGame:
         self.refreshTime = 0.1
         self.controller = controller
         self.display = display
+        self.snakeMoveTimer = 0
         self.map = [[(0,0,0)]*self.mapWidth for _ in range(8)]
-        self.display.draw(self.map)
-        sleep(1)
         self.wait()
+        self.game_loop()
     
     def wait(self):
         self.state = GameState.Waiting
+        
+            
+    def wait_scene(self):
         self.drawWait()
-        self.display.draw(self.map)
-        while self.state == GameState.Waiting:
-            if self.controller.start_button():
-                self.start()
-            sleep(self.refreshTime)
+        if self.controller.start_button():
+            self.start()
+            return
     
     def start(self):
         self.state = GameState.Start
         self.snake = Snake()
         self.addFruit()
-        self.gameLoop()
+        
+    def start_scene(self):
+        self.snakeMoveTimer += self.snake.get_speed()
+        if self.snakeMoveTimer >= 1:
+            self.snakeMoveTimer = 0
+            controller_dir = self.controller.get_Direction()
+            if controller_dir != None:
+                self.snake.change_dir(controller_dir)
+                
+            snake_dir = self.snake.dir
+            x = self.snake.loc[0]
+            y = self.snake.loc[1]
+            if snake_dir == Direction.UP:
+                y -= 1
+            elif snake_dir == Direction.DOWN:
+                y += 1
+            elif snake_dir == Direction.RIGHT:
+                x += 1
+            elif snake_dir == Direction.LEFT:
+                x -= 1
+            if self.isInWall(x, y) or self.snake.isInBody(x, y):
+                self.gameover()
+                return
+            if self.fruitLoc == (x, y):
+                self.snake.add_body()
+                self.addFruit() 
+            self.snake.move(x, y)
+            
+        self.drawSnake()
+        self.drawFruit()
+
         
     def gameover(self):
         self.state = GameState.GameOver
+        self.gameover_timer = 30
+        
+    def gameover_scene(self):
         self.drawGameover()
-        self.display.draw(self.map)
-        sleep(3)
-        self.wait()
-
-    def gameLoop(self):
-        snakeMoveTimer = 0
-        while self.state == GameState.Start:
-            snakeMoveTimer += self.snake.get_speed()
-            if snakeMoveTimer >= 1:
-                snakeMoveTimer = 0
-                controller_dir = self.controller.get_Direction()
-                if controller_dir != None:
-                    self.snake.change_dir(controller_dir)
-                    
-                snake_dir = self.snake.dir
-                x = self.snake.loc[0]
-                y = self.snake.loc[1]
-                if snake_dir == Direction.UP:
-                    y -= 1
-                elif snake_dir == Direction.DOWN:
-                    y += 1
-                elif snake_dir == Direction.RIGHT:
-                    x += 1
-                elif snake_dir == Direction.LEFT:
-                    x -= 1
-                if self.isInWall(x, y) or self.snake.isInBody(x, y):
-                    self.gameover()
-                if self.fruitLoc == (x, y):
-                    self.snake.add_body()
-                    self.addFruit() 
-                self.snake.move(x, y)
-                
+        if self.gameover_timer >= 0:
+            self.gameover_timer -= 1
+        else:
+            self.wait()
+            return
+        
+    def game_loop(self):
+        while True:
             # 繪製地圖
-            self.clearMap()
-            self.drawSnake()
-            self.drawFruit()
+            self.clearMap() 
+            if self.state == GameState.Start:
+                self.start_scene()
+            elif self.state == GameState.GameOver:
+                self.gameover_scene()
+            elif self.state == GameState.Waiting:
+                self.wait_scene()
             self.display.draw(self.map)
             sleep(self.refreshTime)
             

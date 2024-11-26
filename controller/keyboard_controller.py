@@ -29,4 +29,7 @@ class KeyboardController(IController):
         return self.dir
     
     def start_button(self) -> bool:
-        return self.isSpaceClicked
+        if self.isSpaceClicked:
+            self.isSpaceClicked = False
+            return True
+        return False
