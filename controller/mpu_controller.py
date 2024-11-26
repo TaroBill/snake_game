@@ -56,7 +56,7 @@ class MPUController(IController):
         y_rot = self.get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
         return x_rot, y_rot
     
-    def get_Direction(self) -> Direction:
+    def get_direction(self) -> Direction:
         x_rot, y_rot = self.read_rotation()
         if x_rot > 20:
             return Direction.DOWN

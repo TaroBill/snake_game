@@ -38,13 +38,13 @@ class Snake:
     def get_speed(self) -> int:
         return (1 + (self.length - 1) * 0.1) * 0.1
 
-    def isInBody(self, x, y) -> bool:
+    def is_in_body(self, x, y) -> bool:
         body_list = list(self.body.queue)
         for body in body_list:
             if (body[0] == x and body[1] == y):
                 return True
         return False
     
-    def getBody(self) -> list:
+    def get_body(self) -> list:
         body_list = list(self.body.queue)
         return body_list

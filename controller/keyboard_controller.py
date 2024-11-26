@@ -25,7 +25,7 @@ class KeyboardController(IController):
         else:
             self.dir = None
         
-    def get_Direction(self) -> Direction:
+    def get_direction(self) -> Direction:
         return self.dir
     
     def start_button(self) -> bool:

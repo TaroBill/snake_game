@@ -28,7 +28,7 @@ class SnakeGame():
         
             
     def wait_scene(self):
-        self.drawWait()
+        self.draw_wait()
         if self.controller.start_button():
             self.start()
             return
@@ -36,13 +36,13 @@ class SnakeGame():
     def start(self):
         self.state = GameState.Start
         self.snake = Snake()
-        self.addFruit()
+        self.add_fruit()
         
     def start_scene(self):
         self.snakeMoveTimer += self.snake.get_speed()
         if self.snakeMoveTimer >= 1:
             self.snakeMoveTimer = 0
-            controller_dir = self.controller.get_Direction()
+            controller_dir = self.controller.get_direction()
             if controller_dir != None:
                 self.snake.change_dir(controller_dir)
                 
@@ -57,16 +57,16 @@ class SnakeGame():
                 x += 1
             elif snake_dir == Direction.LEFT:
                 x -= 1
-            if self.isInWall(x, y) or self.snake.isInBody(x, y):
+            if self.is_in_wall(x, y) or self.snake.is_in_body(x, y):
                 self.gameover()
                 return
             if self.fruitLoc == (x, y):
                 self.snake.add_body()
-                self.addFruit() 
+                self.add_fruit() 
             self.snake.move(x, y)
             
-        self.drawSnake()
-        self.drawFruit()
+        self.draw_snake()
+        self.draw_fruit()
 
         
     def gameover(self):
@@ -74,7 +74,7 @@ class SnakeGame():
         self.gameover_timer = 30
         
     def gameover_scene(self):
-        self.drawGameover()
+        self.draw_gameover()
         if self.gameover_timer >= 0:
             self.gameover_timer -= 1
         else:
@@ -84,7 +84,7 @@ class SnakeGame():
     def game_loop(self):
         while True:
             # 繪製地圖
-            self.clearMap() 
+            self.clear_map() 
             if self.state == GameState.Start:
                 self.start_scene()
             elif self.state == GameState.GameOver:
@@ -94,39 +94,39 @@ class SnakeGame():
             self.display.draw(self.map)
             sleep(self.refreshTime)
             
-    def addFruit(self):
+    def add_fruit(self):
         availableLoc = []
         for y in range(self.mapHeight):
             for x in range(self.mapWidth):
-                if not self.snake.isInBody(x, y):
+                if not self.snake.is_in_body(x, y):
                     availableLoc.append((x,y))
         randomLoc = random.choice(availableLoc)
         self.fruitLoc = randomLoc
     
-    def drawFruit(self):
+    def draw_fruit(self):
         self.map[self.fruitLoc[1]][self.fruitLoc[0]] = (100,100,0)
         
-    def isInWall(self, x, y):
+    def is_in_wall(self, x, y):
         if x < 0 or x >= self.mapWidth or y < 0 or y >= self.mapHeight:
             return True
         return False
     
-    def drawSnake(self):
-        body = self.snake.getBody()
+    def draw_snake(self):
+        body = self.snake.get_body()
         for loc in body:
             self.map[loc[1]][loc[0]] = self.snake.snakeColor
             
-    def clearMap(self):
+    def clear_map(self):
         for y in range(self.mapHeight):
             for x in range(self.mapWidth):
                 self.map[y][x] = (0,0,0)
                 
-    def drawGameover(self):
+    def draw_gameover(self):
         for y in range(self.mapHeight):
             for x in range(self.mapWidth):
                 self.map[y][x] = (255,0,0)
     
-    def drawWait(self):
+    def draw_wait(self):
         for y in range(self.mapHeight):
             for x in range(self.mapWidth):
                 self.map[y][x] = (0,0,255)
