@@ -5,9 +5,15 @@ class KeyboardController(IController):
     def __init__(self):
         self.dir = None
         self.isSpaceClicked = False
-
+        self.listener = keyboard.Listener(on_press=self.on_press)
+        self.listener.start()
             
     def on_press(self, key):
+        if key == keyboard.Key.space:
+            self.isSpaceClicked = True
+            return 
+        if not hasattr(key, 'char'):
+            return
         if key.char == 'a':
             self.dir = Direction.LEFT
         elif key.char == 'd':
@@ -18,9 +24,6 @@ class KeyboardController(IController):
             self.dir = Direction.DOWN
         else:
             self.dir = None
-            
-        if key == keyboard.Key.space:
-            self.isSpaceClicked = True
         
     def get_Direction(self) -> Direction:
         return self.dir
