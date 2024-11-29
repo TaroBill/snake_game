@@ -75,12 +75,11 @@ class SnakeGame():
 
         
     def gameover(self):
-        self.displayText = f"Game Over! Score: {self.snake.length * int(self.timeSurvie)}"
+        self.display.show_text(f"Game Over! Score: {self.snake.length * int(self.timeSurvie)}")
         self.state = GameState.GameOver
         self.gameover_timer = 30
         
     def gameover_scene(self):
-        self.draw_gameover()
         if self.gameover_timer >= 0:
             self.gameover_timer -= 1
         else:
@@ -138,6 +137,8 @@ class SnakeGame():
                 self.map[y][x] = (0,0,255)
 
 
-from controller.keyboard_controller import KeyboardController
-from display.cli_display import CliDisplay
-SnakeGame(KeyboardController(), CliDisplay(8, 8))
+from controller.joystick import JoystickController
+from display.sense_hat_display import SenseHatDisplay
+from sense_emu import SenseHat
+sense = SenseHat()
+SnakeGame(JoystickController(sense), SenseHatDisplay(8, 8, sense))

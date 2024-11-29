@@ -8,3 +8,7 @@ class IDisplay(ABC):
     @abstractmethod
     def draw(self, map, textDisplay):
         pass
+    
+    @abstractmethod
+    def show_text(self, text):
+        pass
